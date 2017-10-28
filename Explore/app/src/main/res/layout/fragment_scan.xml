@@ -1,0 +1,24 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.khachik.explore.Fragments.ScanFragment">
+
+
+    <ImageView
+        android:id="@+id/scan_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/qr_code_scanner"
+        android:scaleType="fitXY"
+        />
+
+    <ImageView
+        android:id="@+id/scan"
+        android:layout_width="90dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/scan"
+        android:layout_gravity="center"
+        />
+
+</FrameLayout>
