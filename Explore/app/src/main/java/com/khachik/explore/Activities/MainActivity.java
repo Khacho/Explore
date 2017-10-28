@@ -1,10 +1,8 @@
 package com.khachik.explore.Activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,12 +20,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.khachik.explore.Fragments.HomeFragment;
 import com.khachik.explore.Fragments.ScanFragment;
 import com.khachik.explore.R;
 
@@ -73,7 +69,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (null == savedInstanceState) {
-            Fragment fragment = new ScanFragment();
+            Fragment fragment = new HomeFragment();
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction transaction = fm.beginTransaction();
             transaction.replace(R.id.contentFragment, fragment);
@@ -134,10 +130,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         Fragment fragment;
         switch (id) {
-            case R.id.user_profile:
-                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+            case R.id.home:
+                Toast.makeText(this, "Home page", Toast.LENGTH_SHORT).show();
+                fragment = new HomeFragment();
+                changeFragment(fragment);
                 break;
             case R.id.nav_scan:
                 fragment = new ScanFragment();
