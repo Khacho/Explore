@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
+    useLibrary  'org.apache.http.legacy'
     defaultConfig {
         applicationId "com.khachik.explore"
         minSdkVersion 21
@@ -36,5 +37,6 @@ dependencies {
     compile 'com.journeyapps:zxing-android-embedded:2.0.1@aar'
     compile 'com.journeyapps:zxing-android-integration:2.0.1@aar'
     compile 'com.journeyapps:zxing-android-legacy:2.0.1@aar'
+    compile 'com.mcxiaoke.volley:library-aar:1.0.0'
     testCompile 'junit:junit:4.12'
 }
