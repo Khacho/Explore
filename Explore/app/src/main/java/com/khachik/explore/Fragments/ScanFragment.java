@@ -3,6 +3,7 @@ package com.khachik.explore.Fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.http.RequestQueue;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,6 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.khachik.explore.R;
@@ -24,7 +30,6 @@ public class ScanFragment extends Fragment  {
     private Requests request;
 
     public ScanFragment() {
-        this.request = new Requests();
     }
 
 
@@ -42,7 +47,7 @@ public class ScanFragment extends Fragment  {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_scan, container, false);
-        this.request = new Requests();
+        this.request = new Requests(getActivity());
         this.scanButton = (ImageView) view.findViewById(R.id.scan);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,15 +79,13 @@ public class ScanFragment extends Fragment  {
 //        } else {
 //            super.onActivityResult(requestCode, resultCode, data);
 //        }
-        if (requestCode == 0) {
-            if (resultCode != 0) {
-                String contents = data.getStringExtra("SCAN_RESULT");
-                String format = data.getStringExtra("SCAN_RESULT_FORMAT");
-                Toast.makeText(getActivity(), contents, Toast.LENGTH_SHORT).show();
-                Toast.makeText(getActivity(), request.getArticleById(1), Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
-            }
+        if (requestCode == 0) if (resultCode != 0) {
+            String contents = data.getStringExtra("SCAN_RESULT");
+            String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+            Toast.makeText(getActivity(), contents, Toast.LENGTH_SHORT).show();
+            request.getArticleById(1);
+        } else {
+            Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
         }
     }
 
