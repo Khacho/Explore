@@ -6,5 +6,7 @@
     <color name="colorWhite">#ffffff</color>
     <color name="colorPrimaryText">#393434</color>
     <color name="colorLoginBackground">#badbf2</color>
+    <color name="transparent">#80000000</color>
+
 
 </resources>

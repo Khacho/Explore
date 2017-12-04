@@ -8,3 +8,7 @@ module.exports.getDataByCity = function(req, res) {
 module.exports.getDataById = function(req, res) {
     model.getDataById(req,res);
 }
+
+module.exports.getImage = function(req, res) {
+    model.getImage(req,res);
+}

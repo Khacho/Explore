@@ -69,7 +69,7 @@ public class ScanFragment extends Fragment  {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//
+
 //        if(result != null) {
 //            if(result.getContents() == null) {
 //                Toast.makeText(getActivity(), "You canceled the scanning.assa", Toast.LENGTH_SHORT).show();
@@ -83,7 +83,7 @@ public class ScanFragment extends Fragment  {
             String contents = data.getStringExtra("SCAN_RESULT");
             String format = data.getStringExtra("SCAN_RESULT_FORMAT");
             Toast.makeText(getActivity(), contents, Toast.LENGTH_SHORT).show();
-            request.getArticleById(1);
+            request.getArticleById(contents);
         } else {
             Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
         }

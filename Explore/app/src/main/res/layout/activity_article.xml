@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_collapseMode="pin"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextAppearance="@android:color/transparent"
             android:fitsSystemWindows="true">
@@ -37,6 +38,13 @@
                 android:title="@string/app_name"
                 app:layout_collapseMode="pin"
                 />
+            <ImageView
+                android:id="@+id/open_gallery_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_galery"
+                android:padding="10dp"
+                android:layout_gravity="top|right"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -133,12 +141,22 @@
                     android:layout_marginTop="30dp"
                     android:layout_marginBottom="30dp"
                     android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:textSize="16sp"
                     android:textStyle="italic"
                     android:textColor="@color/colorPrimaryText"
                     android:text="@string/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
+                    tools:context="com.khachik.explore.Activities.ArticleActivity" />
+
             </LinearLayout>
 
 
