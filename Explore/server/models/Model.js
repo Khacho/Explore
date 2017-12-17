@@ -11,6 +11,7 @@ var db = require('postgres-gen')(options);
 var dao = require('postgres-gen-dao');
 var data_table = dao({ db: db, table: 'data' });
 var path = require('path');
+const fs = require('fs');
 
 
 module.exports.getDataByCity = function(req, res) {
@@ -37,7 +38,66 @@ module.exports.getDataById = function(req, res) {
     });
 };
 
+module.exports.getImagesList = function(req, res) {
+    var dirName = path.join(__dirname, '../resources/images', req.query.dirName);
+    console.log(dirName);
+    if (!fs.existsSync(dirName)) {
+        console.log("not exists");
+        res.send({});
+        return;
+    }
+    var jsonRes = []
+    var key = "url_list"
+    // jsonRes[key] = [];
+    fs.readdir(dirName, (err, files) => {
+        files.forEach(file => {
+            console.log(file);
+            url = {
+                "small": req.query.dirName + "/"  + file,
+                "medium": req.query.dirName + "/" + file,
+                "large":  req.query.dirName + "/" + file
+            }
+            obj = {
+                "url": url,
+                "timestamp": ""
+            }
+            jsonRes.push(obj);
+        });
+        res.send(jsonRes);
+    })
+}
+
+module.exports.getWallpaperImagesList = function(req, res) {
+    var jsonRes = []
+    var key = "url_list"
+ 
+    db.transaction(function*(t) {
+        var files = (yield t.query("select wallpaper_image from data;")).rows;
+        files.forEach(file => {
+            if("" != file.wallpaper_image && null != file.wallpaper_image ) {
+                console.log(file.wallpaper_image)
+                url = {
+                    "small": file.wallpaper_image,
+                    "medium": file.wallpaper_image,
+                    "large":  file.wallpaper_image
+                }
+                obj = {
+                    "url": url,
+                    "timestamp": ""
+                }
+                jsonRes.push(obj);
+            }
+            
+        });
+
+        res.send(jsonRes);
+    });
+
+}
+
 module.exports.getImage = function(req, res) {
     var file =  path.join(__dirname, '../resources/images', req.query.path); 
+    console.log(file)
+    console.log('get image')
     res.sendFile(file);
 }

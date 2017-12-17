@@ -1,23 +1,18 @@
 package com.khachik.explore.Activities;
 
-import android.app.Activity;
 import android.app.FragmentManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.NestedScrollView;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -27,8 +22,6 @@ import com.khachik.explore.Requests.Requests;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 public class ArticleActivity extends AppCompatActivity
         implements OnMapReadyCallback {
@@ -36,6 +29,7 @@ public class ArticleActivity extends AppCompatActivity
     GoogleMap googleMap;
     private JSONArray json;
     private ImageView wallpaper;
+    private ImageView openGallery;
     private TextView title;
     private TextView buildingDate;
     private TextView country;
@@ -44,6 +38,9 @@ public class ArticleActivity extends AppCompatActivity
     private Requests request;
     private String lon;
     private String lat;
+    private String title_name;
+    private String imagesFolder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +49,7 @@ public class ArticleActivity extends AppCompatActivity
         setContentView(R.layout.activity_article);
         this.request = new Requests(this);
         this.wallpaper = (ImageView) findViewById(R.id.bg_image);
+        this.openGallery = (ImageView) findViewById(R.id.open_gallery_icon);
         String resString;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -82,7 +80,9 @@ public class ArticleActivity extends AppCompatActivity
         try {
             System.out.println("JSON ---------- " + this.json.getJSONObject(0).toString());
             System.out.println(this.json.getJSONObject(0).getString("city"));
-            this.title.setText(this.json.getJSONObject(0).getString("title"));
+            this.title_name = this.json.getJSONObject(0).getString("title");
+            this.imagesFolder = this.json.getJSONObject(0).getString("images_folder");
+            this.title.setText(this.title_name);
             this.country.setText(this.json.getJSONObject(0).getString("country"));
             this.city.setText(this.json.getJSONObject(0).getString("city"));
             this.buildingDate.setText(this.json.getJSONObject(0).getString("building_date"));
@@ -108,6 +108,18 @@ public class ArticleActivity extends AppCompatActivity
 
         mapFragment.getMapAsync(this);
 
+
+        this.openGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ArticleActivity.this, GalleryActivity.class);
+                intent.putExtra("title", title_name);
+                intent.putExtra("images_folder", imagesFolder);
+                ArticleActivity.this.startActivity(intent);
+//                ArticleActivity.this.finish();
+            }
+        });
+
     }
 
 
@@ -120,7 +132,7 @@ public class ArticleActivity extends AppCompatActivity
         if(!(this.lat.equals("null") || this.lon.equals("null"))) {
             loc = new LatLng(Float.parseFloat(this.lat), Float.parseFloat(this.lon));
         }
-//        LatLng loc = new LatLng(40.195186, 44.524703);
+        // LatLng loc = new LatLng(40.195186, 44.524703);
         try {
             googleMap.addMarker(new MarkerOptions().position(loc)
                     .title(this.json.getJSONObject(0).getString("title")));
@@ -130,6 +142,7 @@ public class ArticleActivity extends AppCompatActivity
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

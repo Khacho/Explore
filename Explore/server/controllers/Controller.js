@@ -12,3 +12,12 @@ module.exports.getDataById = function(req, res) {
 module.exports.getImage = function(req, res) {
     model.getImage(req,res);
 }
+
+module.exports.getImagesList = function(req, res) {
+    model.getImagesList(req,res);
+}
+
+module.exports.getWallpaperImagesList = function(req, res) {
+    model.getWallpaperImagesList(req,res);
+}
+

@@ -24,8 +24,10 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.khachik.explore.Fragments.GalleryFragment;
 import com.khachik.explore.Fragments.HomeFragment;
 import com.khachik.explore.Fragments.ScanFragment;
+import com.khachik.explore.Fragments.SearchFragment;
 import com.khachik.explore.R;
 
 public class MainActivity extends AppCompatActivity
@@ -116,9 +118,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -140,13 +140,21 @@ public class MainActivity extends AppCompatActivity
                 changeFragment(fragment);
                 break;
             case R.id.nav_gallery:
-                Toast.makeText(this, "Nac galery", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Nav galery", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, GalleryActivity.class);
+                this.startActivity(intent);
+
+                break;
+            case R.id.nav_search:
+                Toast.makeText(this, "Nav search", Toast.LENGTH_SHORT).show();
+                fragment = new SearchFragment();
+                changeFragment(fragment);
                 break;
             case R.id.nav_favorites:
-                Toast.makeText(this, "Nac slideshow", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Nav favorites", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_manage:
-                Toast.makeText(this, "Nac manage", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Nav manage", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

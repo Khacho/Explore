@@ -108,6 +108,7 @@ public class Requests {
         final String[] respons = new String[1];
         String url = "http://" + this.host + ":" + this.port + "/articles/:" + country;
         // Request a string response from the provided URL.
+        System.out.println("url - " + url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -132,7 +133,8 @@ public class Requests {
                                 String wallpaper_image = resArray.getJSONObject(i).getString("wallpaper_image");
                                 String latitude = resArray.getJSONObject(i).getString("latitude");
                                 String longitude = resArray.getJSONObject(i).getString("longitude");
-                                adapterItems.add(new ArticlesModel(title, data, date, city, country, wallpaper_image, latitude, longitude));
+                                String imagesFolder= resArray.getJSONObject(i).getString("images_folder");
+                                adapterItems.add(new ArticlesModel(title, data, date, city, country, imagesFolder, wallpaper_image, latitude, longitude));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -153,6 +155,8 @@ public class Requests {
 
     private void setupRecyclerview(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.home_recyclerview);
+        System.out.println("recycler view - " + recyclerView);
+        System.out.println("recycler view - " + view.findViewById(R.id.home_recyclerview));
         adapter = new ArticlesAdapter(adapterItems, view.getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(adapter);

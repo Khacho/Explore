@@ -8,17 +8,19 @@ public class ArticlesModel {
     private String building_date;
     private String city;
     private String wallpaper_image;
+    private String images_folder;
 
     private String latitude;
     private String longitude;
 
 
-    public ArticlesModel(String title, String data, String building_date, String city, String country, String wallpaper_image, String latitude, String longitude) {
+    public ArticlesModel(String title, String data, String building_date, String city, String country, String images_folder, String wallpaper_image, String latitude, String longitude) {
         this.title = title;
         this.data = data;
         this.building_date = building_date;
         this.city = city;
         this.country = country;
+        this.images_folder = images_folder;
         this.wallpaper_image = wallpaper_image;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -27,6 +29,15 @@ public class ArticlesModel {
     public String getTitle() {
 
         return title;
+    }
+
+
+    public String getImages_folder() {
+        return images_folder;
+    }
+
+    public void setImages_folder(String images_folder) {
+        this.images_folder = images_folder;
     }
 
     public String getLatitude() {
@@ -44,8 +55,6 @@ public class ArticlesModel {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
-
-
 
     public void setTitle(String title) {
         this.title = title;

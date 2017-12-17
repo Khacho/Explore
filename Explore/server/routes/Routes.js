@@ -9,4 +9,7 @@ module.exports = function(app) {
     app.get('/articles/:city', controller.getDataByCity);
     app.get('/article/:id', controller.getDataById);
     app.get('/image', controller.getImage);
+    app.get('/images', controller.getImagesList);
+    app.get('/wallpapers', controller.getWallpaperImagesList);
+
 }

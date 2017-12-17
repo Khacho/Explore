@@ -71,10 +71,15 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
                 Toast.makeText(context, "click", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(context, ArticleActivity.class);
-                String res = "[{'title': '" + adapterItems.get(position).getTitle() + "','data':'" + adapterItems.get(position).getData()  +
-                        "', 'wallpaper_image': '" + adapterItems.get(position).getWallpaper_image() + "','building_date':'" + adapterItems.get(position).getBuilding_date() +
-                        "', 'city': '" + adapterItems.get(position).getCity() + "','country':'" + adapterItems.get(position).getCountry() +
-                        "','latitude':'" + adapterItems.get(position).getLatitude() +  "','longitude':'" + adapterItems.get(position).getLongitude() +  "'}]";
+                String res = "[{'title': '" + adapterItems.get(position).getTitle() +
+                        "','data':'" + adapterItems.get(position).getData()  +
+                        "', 'wallpaper_image': '" + adapterItems.get(position).getWallpaper_image() +
+                        "', 'images_folder': '" + adapterItems.get(position).getImages_folder() +
+                        "','building_date':'" + adapterItems.get(position).getBuilding_date() +
+                        "', 'city': '" + adapterItems.get(position).getCity() +
+                        "','country':'" + adapterItems.get(position).getCountry() +
+                        "','latitude':'" + adapterItems.get(position).getLatitude() +
+                        "','longitude':'" + adapterItems.get(position).getLongitude() +  "'}]";
                 intent.putExtra("respons", res);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
