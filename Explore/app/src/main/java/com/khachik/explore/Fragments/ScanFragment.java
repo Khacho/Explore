@@ -45,6 +45,7 @@ public class ScanFragment extends Fragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_scan, container, false);
         this.request = new Requests(getActivity());
@@ -57,13 +58,19 @@ public class ScanFragment extends Fragment  {
 //                intentIntegrator.setPrompt("Scan");
 //                intentIntegrator.setCameraId(0);
 //                intentIntegrator.initiateScan();
-                Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+//                Intent intent = new Intent("com.google.zxing.client.android.SCAN");
                 //intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                startActivityForResult(intent, 0);
+//                startActivityForResult(intent, 0);
+                openScanner();
             }
         });
         return view;
 
+    }
+
+    public void openScanner() {
+        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+        startActivityForResult(intent, 0);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.khachik.explore.Models;
 import java.util.Date;
 
 public class ArticlesModel {
+    private String id;
     private String title;
     private String data;
     private String building_date;
@@ -14,7 +15,8 @@ public class ArticlesModel {
     private String longitude;
 
 
-    public ArticlesModel(String title, String data, String building_date, String city, String country, String images_folder, String wallpaper_image, String latitude, String longitude) {
+    public ArticlesModel(String id, String title, String data, String building_date, String city, String country, String images_folder, String wallpaper_image, String latitude, String longitude) {
+        this.id = id;
         this.title = title;
         this.data = data;
         this.building_date = building_date;
@@ -26,11 +28,11 @@ public class ArticlesModel {
         this.longitude = longitude;
     }
 
-    public String getTitle() {
+    public String getTitle() { return title; }
 
-        return title;
-    }
+    public String getId() { return id; }
 
+    public void setId(String id) { this.id = id;}
 
     public String getImages_folder() {
         return images_folder;

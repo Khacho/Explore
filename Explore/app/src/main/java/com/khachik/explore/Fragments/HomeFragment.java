@@ -1,10 +1,14 @@
 package com.khachik.explore.Fragments;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -41,14 +45,38 @@ public class HomeFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
         this.request = new Requests(getActivity());
         handleInstanceState(savedInstanceState, view);
-//        this.fab = (FloatingActionButton) view.findViewById(R.id.fab);
-//        this.fab.setOnClickListener(new View.OnClickListener() {
+
+        final FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.home_recyclerview);
+        // Show hide fab when recycle view scrolls.
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                switch (newState) {
+                    case RecyclerView.SCROLL_STATE_IDLE:
+                        fab.show();
+                        break;
+                    case RecyclerView.SCROLL_STATE_DRAGGING:
+                        fab.hide();
+                        break;
+                }
+
+            }
+
 //            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(getActivity(), "FAB", Toast.LENGTH_SHORT).show();
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                fab.hide();
 //            }
-//        });
-//        setupRecyclerview(view);
+        });
+        fab.show();
 
 
         return view;
@@ -57,17 +85,8 @@ public class HomeFragment extends Fragment {
     private void handleInstanceState(Bundle savedInstanceState, View view) {
         adapterItems = new ArrayList<>();
         request.getArticleByCountry("Vanadzor", view);
-//        System.out.println("_________________________res______________________" + respons);
-//        adapterItems.add(new ArticlesModel("Ardzan_1", "Biiiiiiiiiiiiiiiiiiiiiig data", "1963-08-31T20:00:00.000Z", "Vanadzor", "Armenia"));
-//        adapterItems.add(new ArticlesModel("Ardzan_2", "Biiiiiiiiiiiiiiiiiiiiiig data", "1963-08-31T20:00:00.000Z", "Vanadzor", "Armenia"));
-//        adapterItems.add(new ArticlesModel("Ardzan_3", "Biiiiiiiiiiiiiiiiiiiiiig data", "1963-08-31T20:00:00.000Z", "Vanadzor", "Armenia"));
-//        adapterItems.add(new ArticlesModel("Ardzan_4", "Biiiiiiiiiiiiiiiiiiiiiig data", "1963-08-31T20:00:00.000Z", "Vanadzor", "Armenia"));
     }
 
-    private void setupRecyclerview(View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.home_recyclerview);
-        adapter = new ArticlesAdapter(adapterItems, getActivity());
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(adapter);
-    }
+
+
 }

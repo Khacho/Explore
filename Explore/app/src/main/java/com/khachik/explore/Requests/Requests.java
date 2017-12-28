@@ -125,6 +125,7 @@ public class Requests {
                         adapterItems = new ArrayList<>();
                         for(int i=0;i<resArray.length();i++){
                             try {
+                                String id = resArray.getJSONObject(i).getString("id");
                                 String title = resArray.getJSONObject(i).getString("title");
                                 String country = resArray.getJSONObject(i).getString("country");
                                 String city = resArray.getJSONObject(i).getString("city");
@@ -134,7 +135,7 @@ public class Requests {
                                 String latitude = resArray.getJSONObject(i).getString("latitude");
                                 String longitude = resArray.getJSONObject(i).getString("longitude");
                                 String imagesFolder= resArray.getJSONObject(i).getString("images_folder");
-                                adapterItems.add(new ArticlesModel(title, data, date, city, country, imagesFolder, wallpaper_image, latitude, longitude));
+                                adapterItems.add(new ArticlesModel(id, title, data, date, city, country, imagesFolder, wallpaper_image, latitude, longitude));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

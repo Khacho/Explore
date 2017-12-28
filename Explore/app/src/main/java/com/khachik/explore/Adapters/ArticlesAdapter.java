@@ -15,15 +15,23 @@ import com.khachik.explore.Activities.ArticleActivity;
 import com.khachik.explore.Models.ArticlesModel;
 import com.khachik.explore.R;
 import com.khachik.explore.Requests.Requests;
+import com.khachik.explore.utils.AddToTheSharedPrefs;
 
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.khachik.explore.R.id.fab;
+
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHolder> {
-    private ArrayList<ArticlesModel> adapterItems;
+    private AddToTheSharedPrefs addToTheSharedPrefs;
     private Requests request;
     private Context context;
+    private ArrayList<ArticlesModel> adapterItems;
+    private  ArrayList<String> favoritesList;
+
+
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -31,6 +39,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         private final TextView artycleTitle;
         private final TextView artycleCity;
         private final TextView artycleCountry;
+        private ImageView favorite;
         private final CircleImageView artycleImage;
         public ViewHolder(View view) {
             super(view);
@@ -39,6 +48,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
             artycleCity = (TextView) view.findViewById(R.id.artycle_city);
             artycleCountry = (TextView) view.findViewById(R.id.artycle_country);
             artycleImage = (CircleImageView) view.findViewById(R.id.artycle_image);
+            favorite = (ImageView) view.findViewById(R.id.favorite);
         }
     }
     public ArticlesAdapter(ArrayList<ArticlesModel> adapterItems, Context context) {
@@ -55,7 +65,10 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        this.addToTheSharedPrefs = AddToTheSharedPrefs.getInstance();
+        this.favoritesList =  this.addToTheSharedPrefs.getFavorites(context);
+
         holder.artycleTitle.setText(adapterItems.get(position).getTitle());
         holder.artycleCity.setText(adapterItems.get(position).getCity());
         holder.artycleCountry.setText(adapterItems.get(position).getCountry());
@@ -64,6 +77,23 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
         } else {
             holder.artycleImage.setImageResource(R.mipmap.ic_launcher);
         }
+        final String id = adapterItems.get(position).getId();
+        setFavButtonBackground(holder.favorite, id);
+
+        holder.favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(favoritesList.contains(id)) {
+                    addToTheSharedPrefs.removeFavorite(context, id);
+                    favoritesList.remove(id);
+                    holder.favorite.setImageResource(R.drawable.ic_heart);
+                } else {
+                    addToTheSharedPrefs.addFavorite(context, id);
+                    favoritesList.add(id);
+                    holder.favorite.setImageResource(R.drawable.ic_fill_heart);
+                }
+            }
+        });
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +101,8 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
                 Toast.makeText(context, "click", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(context, ArticleActivity.class);
-                String res = "[{'title': '" + adapterItems.get(position).getTitle() +
+                String res = "[{" + "'id': '" + adapterItems.get(position).getId() +
+                        "','title': '" + adapterItems.get(position).getTitle() +
                         "','data':'" + adapterItems.get(position).getData()  +
                         "', 'wallpaper_image': '" + adapterItems.get(position).getWallpaper_image() +
                         "', 'images_folder': '" + adapterItems.get(position).getImages_folder() +
@@ -89,5 +120,16 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesAdapter.ViewHo
     @Override
     public int getItemCount() {
         return adapterItems.size();
+    }
+
+    private void setFavButtonBackground(ImageView favorit, String id) {
+        System.out.println("FAB - " + id);
+        if(this.favoritesList.contains(id)) {
+            favorit.setImageResource(R.drawable.ic_fill_heart);
+        }
+    }
+
+    public void callOnCreate(){
+        System.out.println("Caaled");
     }
 }
