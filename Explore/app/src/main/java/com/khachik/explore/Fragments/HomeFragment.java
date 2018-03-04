@@ -2,6 +2,7 @@ package com.khachik.explore.Fragments;
 
 import android.content.ClipData;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -28,9 +29,9 @@ import java.util.ArrayList;
 public class HomeFragment extends Fragment {
 
     private RecyclerView.Adapter adapter;
-    private ArrayList<ArticlesModel> adapterItems;
     private Requests request;
     private FloatingActionButton fab;
+    private String city;
 
 
     @Override
@@ -43,6 +44,11 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_home, container, false);
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            this.city= bundle.getString("city");
+        }
         this.request = new Requests(getActivity());
         handleInstanceState(savedInstanceState, view);
 
@@ -51,6 +57,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Toast.makeText(getActivity(), "Clicked", Toast.LENGTH_SHORT).show();
+                openScanner();
             }
         });
 
@@ -83,10 +90,30 @@ public class HomeFragment extends Fragment {
     }
 
     private void handleInstanceState(Bundle savedInstanceState, View view) {
-        adapterItems = new ArrayList<>();
-        request.getArticleByCountry("Vanadzor", view);
+        if(this.city != null) {
+            request.getArticleByCountry(this.city, view);
+            System.out.println("Not null");
+        } else {
+            System.out.println("null");
+            request.getArticleByCountry("Vanadzor", view);
+        }
     }
 
 
+    public void openScanner() {
+        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+        intent.putExtra("PROMPT_MESSAGE", "Qr code scanner.");
+        startActivityForResult(intent, 0);
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 0) if (resultCode != 0) {
+            String id = data.getStringExtra("SCAN_RESULT");
+            request.getArticleById(id);
+        } else {
+            Toast.makeText(getActivity(), "Canceled", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

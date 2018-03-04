@@ -1,8 +1,15 @@
 package com.khachik.explore.Activities;
 
 import android.Manifest;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +19,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,23 +32,39 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.khachik.explore.Fragments.FavoritesFragment;
 import com.khachik.explore.Fragments.GalleryFragment;
 import com.khachik.explore.Fragments.HomeFragment;
 import com.khachik.explore.Fragments.ScanFragment;
 import com.khachik.explore.Fragments.SearchFragment;
 import com.khachik.explore.R;
+import com.khachik.explore.Requests.Requests;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private FusedLocationProviderClient mFusedLocationClient;
+    private Requests request;
+    private String cityname;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        this.request = new Requests(this);
         setSupportActionBar(toolbar);
+
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA)
@@ -52,15 +77,21 @@ public class MainActivity extends AppCompatActivity
                         1);
             }
         }
-        
-//        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        1);
+            }
+        }
+//        this.askForPermission(Manifest.permission.CAMERA, 5);
+//        this.askForPermission(Manifest.permission.ACCESS_FINE_LOCATION, 1);
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -72,14 +103,39 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (null == savedInstanceState) {
-            Fragment fragment = new HomeFragment();
-            FragmentManager fm = getSupportFragmentManager();
-            FragmentTransaction transaction = fm.beginTransaction();
-            transaction.replace(R.id.contentFragment, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
+
+
+        final Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                List<Address> addresses;
+                                try {
+                                    addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                                    if (addresses.size() > 0) {
+                                        cityname = addresses.get(0).getLocality().toString();
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (null == savedInstanceState) {
+                                Bundle bundle = new Bundle();
+                                bundle.putString("city", cityname);
+                                Fragment fragment = new HomeFragment();
+                                fragment.setArguments(bundle);
+                                FragmentManager fm = getSupportFragmentManager();
+                                FragmentTransaction transaction = fm.beginTransaction();
+                                transaction.replace(R.id.contentFragment, fragment);
+                                transaction.addToBackStack(null);
+                                transaction.commit();
+                            }
+
+                        }
+                    });
     }
 
     @Override
@@ -107,8 +163,45 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) searchItem.getActionView();
+
+//        searchView.setOnSearchClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                System.out.println("setOnSearchClickListener >>>>>>>>>> ");
+//                searchView.requestFocus();
+//            }
+//        });
+//
+//        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+//            @Override
+//            public boolean onClose() {
+//                System.out.println("setOnCloseListener >>>>>>>>>> ");
+//                return false;    // true = prevent collapse mSearchView
+//            }
+//        });
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String text) {
+                try {
+                    request.getArticleByName(text);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String text) {
+                return true;
+            }
+        });
         return true;
     }
 
@@ -133,8 +226,10 @@ public class MainActivity extends AppCompatActivity
         Fragment fragment;
         switch (id) {
             case R.id.home:
-                Toast.makeText(this, "Home page", Toast.LENGTH_SHORT).show();
+                Bundle bundle = new Bundle();
+                bundle.putString("city", cityname);
                 fragment = new HomeFragment();
+                fragment.setArguments(bundle);
                 changeFragment(fragment);
                 break;
             case R.id.nav_scan:
@@ -142,18 +237,17 @@ public class MainActivity extends AppCompatActivity
                 changeFragment(fragment);
                 break;
             case R.id.nav_gallery:
-                Toast.makeText(this, "Nav galery", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(this, GalleryActivity.class);
                 this.startActivity(intent);
 
                 break;
             case R.id.nav_search:
-                Toast.makeText(this, "Nav search", Toast.LENGTH_SHORT).show();
                 fragment = new SearchFragment();
                 changeFragment(fragment);
                 break;
             case R.id.nav_favorites:
-                Toast.makeText(this, "Nav favorites", Toast.LENGTH_SHORT).show();
+                fragment = new FavoritesFragment();
+                changeFragment(fragment);
                 break;
             case R.id.nav_manage:
                 Toast.makeText(this, "Nav manage", Toast.LENGTH_SHORT).show();
@@ -174,5 +268,26 @@ public class MainActivity extends AppCompatActivity
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+
+    private void askForPermission(String permission, Integer requestCode) {
+        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, permission)) {
+
+                //This is called if user has denied the permission before
+                //In this case I am just asking the permission again
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+
+            } else {
+
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
+            }
+        } else {
+
+        }
+    }
+
 
 }

@@ -20,6 +20,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
@@ -70,7 +71,6 @@ public class ArticleActivity extends AppCompatActivity
         this.favoritesList =  this.addToTheSharedPrefs.getFavorites(this);
         this.fab = (FloatingActionButton) findViewById(R.id.floating_favorit);
 
-//        this.follow = (Button) findViewById(R.id.follow);
         String resString;
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
@@ -130,6 +130,7 @@ public class ArticleActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
 
 
+
         this.openGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -177,6 +178,7 @@ public class ArticleActivity extends AppCompatActivity
         }
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
         googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        googleMap.getUiSettings().setScrollGesturesEnabled(false);
     }
 
 

@@ -41,6 +41,8 @@ import org.json.JSONObject;
 
 import java.io.Console;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class Requests {
@@ -84,6 +86,31 @@ public class Requests {
         this.queue.add(stringRequest);
     }
 
+    public void getArticleByName(String title) throws UnsupportedEncodingException {
+
+        String url = "http://" + this.host + ":" + this.port + "/articleByName/:" + URLEncoder.encode(title, "utf-8");
+        // Request a string response from the provided URL.
+//        System.out.println("Request is" + url);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String res) {
+//                        System.out.println("Response is: " + res);
+                        Intent intent = new Intent(context, ArticleActivity.class);
+                        intent.putExtra("respons", res);
+                        context.startActivity(intent);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("That didn't work!");
+            }
+        });
+        // Add the request to the RequestQueue.
+
+        this.queue.add(stringRequest);
+    }
+
     public void getArticleWallpaper(final ImageView imageView, String path) {
         String url = "http://" + this.host + ":" + this.port + "/image?path=" +  path;
         System.out.println("_____reqest_____" + path);
@@ -104,8 +131,6 @@ public class Requests {
     }
 
     public void getArticleByCountry(String country, final View view) {
-        final boolean[] responsGot = {false};
-        final String[] respons = new String[1];
         String url = "http://" + this.host + ":" + this.port + "/articles/:" + country;
         // Request a string response from the provided URL.
         System.out.println("url - " + url);
@@ -115,7 +140,6 @@ public class Requests {
                     public void onResponse(String res) {
                         // Display the first 500 characters of the response string.
                         System.out.println("______ Response is: " + res);
-                        responsGot[0] = true;
                         JSONArray resArray = null;
                         try {
                             resArray = new JSONArray(res);
@@ -140,13 +164,12 @@ public class Requests {
                                 e.printStackTrace();
                             }
                         }
-                        setupRecyclerview(view);
+                        setupRecyclerview(view, R.id.home_recyclerview);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println(" _______ That didn't work!");
-                responsGot[0] = true;
             }
         });
         // Add the request to the RequestQueue.
@@ -154,12 +177,74 @@ public class Requests {
         this.queue.add(stringRequest);
     }
 
-    private void setupRecyclerview(View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.home_recyclerview);
-        System.out.println("recycler view - " + recyclerView);
-        System.out.println("recycler view - " + view.findViewById(R.id.home_recyclerview));
+    public void getFavoriteArticles(ArrayList<String> idList, final View view){
+        String url = "http://" + this.host + ":" + this.port + "/favorites?list[]=" + idList.get(0);
+        for(int i = 1; i < idList.size(); ++i) {
+            url += "&list[]=" + idList.get(i);
+        }
+        // Request a string response from the provided URL.
+        System.out.println("url - " + url);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String res) {
+                        // Display the first 500 characters of the response string.
+                        System.out.println("______ Response is: " + res);
+                        JSONArray resArray = null;
+                        try {
+                            resArray = new JSONArray(res);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        adapterItems = new ArrayList<>();
+                        for(int i = 0; i < resArray.length(); i++){
+                            try {
+                                String id = resArray.getJSONObject(i).getString("id");
+                                String title = resArray.getJSONObject(i).getString("title");
+                                String country = resArray.getJSONObject(i).getString("country");
+                                String city = resArray.getJSONObject(i).getString("city");
+                                String date = resArray.getJSONObject(i).getString("building_date");
+                                String data = resArray.getJSONObject(i).getString("data");
+                                String wallpaper_image = resArray.getJSONObject(i).getString("wallpaper_image");
+                                String latitude = resArray.getJSONObject(i).getString("latitude");
+                                String longitude = resArray.getJSONObject(i).getString("longitude");
+                                String imagesFolder= resArray.getJSONObject(i).getString("images_folder");
+                                adapterItems.add(new ArticlesModel(id, title, data, date, city, country, imagesFolder, wallpaper_image, latitude, longitude));
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        setupRecyclerview(view, R.id.favorites_recyclerview);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println(" _______ That didn't work!");
+            }
+        });
+        // Add the request to the RequestQueue.
+
+        this.queue.add(stringRequest);
+    }
+
+    private void setupRecyclerview(View view, int rec) {
+        RecyclerView recyclerView = view.findViewById(rec);
         adapter = new ArticlesAdapter(adapterItems, view.getContext());
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(adapter);
+    }
+
+    public String getUnicodeString(String myString) {
+        String text = "";
+        try {
+
+            byte[] utf8Bytes = myString.getBytes("UTF8");
+            text = new String(utf8Bytes, "UTF8");
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return text;
     }
 }
