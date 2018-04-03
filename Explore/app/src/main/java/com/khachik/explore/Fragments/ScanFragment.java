@@ -53,14 +53,6 @@ public class ScanFragment extends Fragment  {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                IntentIntegrator intentIntegrator = new IntentIntegrator(getActivity());
-//                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-//                intentIntegrator.setPrompt("Scan");
-//                intentIntegrator.setCameraId(0);
-//                intentIntegrator.initiateScan();
-//                Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-                //intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-//                startActivityForResult(intent, 0);
                 openScanner();
             }
         });
@@ -69,26 +61,22 @@ public class ScanFragment extends Fragment  {
     }
 
     public void openScanner() {
-        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-        startActivityForResult(intent, 0);
+//        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+//        intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+//        startActivityForResult(intent, 0);
+
+        IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+        integrator.setPrompt("Qr code scanner");
+        integrator.setCameraId(0);
+        integrator.initiateScan();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
-//        if(result != null) {
-//            if(result.getContents() == null) {
-//                Toast.makeText(getActivity(), "You canceled the scanning.assa", Toast.LENGTH_SHORT).show();
-//            } else {
-//                Toast.makeText(getActivity(), result.getContents(), Toast.LENGTH_SHORT).show();
-//            }
-//        } else {
-//            super.onActivityResult(requestCode, resultCode, data);
-//        }
         if (requestCode == 0) if (resultCode != 0) {
             String contents = data.getStringExtra("SCAN_RESULT");
-            String format = data.getStringExtra("SCAN_RESULT_FORMAT");
             Toast.makeText(getActivity(), contents, Toast.LENGTH_SHORT).show();
             request.getArticleById(contents);
         } else {

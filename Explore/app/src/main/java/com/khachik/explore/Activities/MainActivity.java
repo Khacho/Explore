@@ -145,7 +145,9 @@ public class MainActivity extends AppCompatActivity
             if(result.getContents() == null) {
                 Toast.makeText(this, "You canceled the scanning.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, result.getContents(), Toast.LENGTH_SHORT).show();
+                String contents = data.getStringExtra("SCAN_RESULT");
+                Toast.makeText(this, contents, Toast.LENGTH_SHORT).show();
+                request.getArticleById(contents);
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

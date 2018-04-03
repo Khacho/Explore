@@ -1,30 +1,18 @@
 package com.khachik.explore.Fragments;
 
-import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.khachik.explore.Activities.ArticleActivity;
-import com.khachik.explore.Activities.MainActivity;
-import com.khachik.explore.Adapters.ArticlesAdapter;
-import com.khachik.explore.Models.ArticlesModel;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.khachik.explore.R;
 import com.khachik.explore.Requests.Requests;
-
-import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
@@ -101,9 +89,14 @@ public class HomeFragment extends Fragment {
 
 
     public void openScanner() {
-        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-        intent.putExtra("PROMPT_MESSAGE", "Qr code scanner.");
-        startActivityForResult(intent, 0);
+//        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+//        intent.putExtra("PROMPT_MESSAGE", "Qr code scanner.");
+//        startActivityForResult(intent, 0);
+        IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+        integrator.setPrompt("Qr code scanner");
+        integrator.setCameraId(0);
+        integrator.initiateScan();
     }
 
     @Override
