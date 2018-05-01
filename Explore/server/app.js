@@ -10,6 +10,14 @@ var routes = require('./routes/Routes');
 
 var app = express();
 
+var responseHeaders = {  
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "access-control-allow-headers": "content-type, accept",
+    "access-control-max-age": 10,
+    "Content-Type": "application/json"
+};
+
 //My changes
 
 app.use(bodyParser.json({ type: 'application/json' }));
@@ -32,8 +40,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', routes);
 
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Cookies,X-File-Name');
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
+
+app.use((req, res, next) => {
+    console.log('OPTIONS', req.method);
+    if (req.method == "OPTIONS") {  
+        console.log('OPTIONS INSIDE');
+        // Add headers to response and send
+        res.writeHead(202, responseHeaders);
+        res.end();
+    }
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
+  console.log('Not found >>>> ', req.headers);
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
